@@ -23,3 +23,43 @@ grype.json & grype.txt → Vulnerability scan from Grype
 trivy.json & trivy.txt → Vulnerability & misconfiguration scan from Trivy
 
 Optional signing & verification results from Cosign
+
+How it works
+
+build_image → Builds your container image with Docker-in-Docker.
+
+scan_image →
+
+Runs Syft → generates SBOM
+
+Runs Grype → vulnerability scan from SBOM
+
+Runs Trivy → vulnerability + misconfig scan
+
+Saves all reports as GitLab CI artifacts
+
+sign_image (only on main branch) →
+
+Uses Cosign to sign and verify the image
+
+Keys come from GitLab CI/CD variables:
+
+COSIGN_KEY → base64 private key or inline private key
+
+COSIGN_PUB → base64 public key or inline public key
+
+push_image → Pushes signed image to your GitLab Container Registry
+
+Setup in GitLab
+
+Go to Settings → CI/CD → Variables
+
+Add:
+
+COSIGN_KEY → contents of cosign.key
+
+COSIGN_PUB → contents of cosign.pub
+
+CI_REGISTRY_USER → GitLab registry username
+
+CI_REGISTRY_PASSWORD → GitLab registry token/password
